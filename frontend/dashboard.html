@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEC Placement Statistics Portal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    
+    
+
+<!-- HEADER -->
+<header class="header">
+    <h1>PEC Placement Statistics Portal</h1>
+    <p>Punjab Engineering College, Chandigarh</p>
+    <div style="display:flex; justify-content: space-between; align-items:center;">
+  <h2 id="heading1"></h2>
+
+  <input 
+    type="text" 
+    id="searchInput" 
+    placeholder="Search by name, SID, company..." 
+    style="padding:8px; width:250px; border-radius:5px; border:1px solid #ccc;"
+  >
+</div>
+    
+</header>
+
+<!-- NAVBAR -->
+ 
+<nav class="navbar">
+  
+    
+    
+    <a href="https://pec.ac.in">Home</a>
+    <a href="branch.html">Branch Stats</a>
+    <a href = "#">Internships</a>
+     
+    
+</nav>
+
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+    <div class="card">
+
+       <h2 id="heading">CSE Placement Statistics 2024</h2>
+
+        <!-- FILTER -->
+        <div class="filters">
+          <select id="year">
+  <option value="2024">2024</option>
+  <option value="2023">2023</option>
+  <option value="2022">2022</option>
+</select>
+
+<select id="branch">
+  <option value="CSE">CSE</option>
+  <option value="ECE">ECE</option>
+  <option value="Mechanical">Mechanical</option>
+</select>
+
+<button id="filterBtn">Filter</button>
+
+        </div>
+
+
+        <!-- TABLE -->
+        <table>
+
+<thead>
+<tr>
+<th>Total Students</th>
+<th>Placed</th>
+<th>Highest Package</th>
+<th>Average Package</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td id="totalStudents">Loading...</td>
+<td id="placedStudents">Loading...</td>
+<td id="highestPackage">Loading...</td>
+<td id="avgPackage">Loading...</td>
+</tr>
+</tbody>
+
+</table>
+<h3>Placed Students</h3>
+
+<table id="studentsTable">
+<thead>
+<tr>
+    <th>SID</th>
+    <th>Name</th>
+    <th>Company</th>
+    <th>City</th>
+    <th>Package (LPA)</th>
+</tr>
+</thead>
+
+<tbody id="studentsBody">
+
+</tbody>
+</table>
+
+
+    </div>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+    © 2026 Punjab Engineering College | Placement Cell
+</footer>
+
+
+<script src = "script.js"></script>
+</body>
+</html>
