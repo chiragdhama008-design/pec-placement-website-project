@@ -18,12 +18,14 @@
     <div style="display:flex; justify-content: space-between; align-items:center;">
   <h2 id="heading1"></h2>
 
-  <input 
-    type="text" 
-    id="searchInput" 
-    placeholder="Search by name, SID, company..." 
-    style="padding:8px; width:250px; border-radius:5px; border:1px solid #ccc;"
-  >
+ <input 
+  type="text" 
+  id="searchInput" 
+  placeholder="Search by name, SID, company..." 
+  onkeyup="handleSearch()"
+
+  
+/>
 </div>
     
 </header>
@@ -120,6 +122,6 @@
 </footer>
 
 
-<script src = "script.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>
