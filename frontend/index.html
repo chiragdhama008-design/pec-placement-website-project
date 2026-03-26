@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEC Student Portal - Login</title>
+    <style>
+        :root {
+            --pec-blue: #003366;
+            --pec-light-blue: #004b87;
+            --pec-gold: #f2a900;
+            --bg-gradient-start: #e0eaf5;
+            --bg-gradient-end: #b8cde0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            display: flex;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            min-height: 550px; 
+        }
+
+        .info-panel {
+            flex: 1;
+            background: linear-gradient(135deg, var(--pec-blue) 0%, var(--pec-light-blue) 100%);
+            color: #ffffff;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .info-panel h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--pec-gold);
+        }
+
+        .info-panel p {
+            font-size: 18px;
+            color: #e0e0e0;
+        }
+
+        .login-panel {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 60px;
+            font-size: 13px;
+            color: #aaa;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            .info-panel {
+                display: none; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="info-panel">
+            <h2>Punjab Engineering College</h2>
+            <p>(Deemed to be University), Chandigarh</p>
+        </div>
+
+        <div class="login-panel">
+            <div id="g_id_onload"
+                 data-client_id="832533236059-bhhhjtupvlks59ht7a4b78th5jgucd5l.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+
+            <div class="footer-text">
+                &copy; 2026 Punjab Engineering College. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="login.js"></script>
+</body>
+</html>

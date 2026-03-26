@@ -16,6 +16,7 @@
     "cors": "^2.8.6",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "google-auth-library": "^10.6.2",
     "mongoose": "^9.2.4"
   }
 }
