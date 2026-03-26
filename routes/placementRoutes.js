@@ -77,6 +77,31 @@ router.get("/stats", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// ================================
+// 🔍 SEARCH placements (LIVE)
+// ================================
+router.get("/search", async (req, res) => {
+  const query = req.query.q;
+
+  try {
+    if (!query) {
+      return res.json([]);
+    }
+
+    const results = await Placement.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { sid: { $regex: query, $options: "i" } },
+        { company: { $regex: query, $options: "i" } }
+      ]
+    });
+
+    res.json(results);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ================================
 // ADD placement
@@ -182,5 +207,6 @@ router.get("/branch-stats", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
