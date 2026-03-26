@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// const connectDB = require("./config/db");
+const connectDB = require("./config/db");
 const placementRoutes = require("./routes/placementRoutes");
 
 // 1. Import Google Auth Library
@@ -13,7 +13,7 @@ const CLIENT_ID = "832533236059-bhhhjtupvlks59ht7a4b78th5jgucd5l.apps.googleuser
 const client = new OAuth2Client(CLIENT_ID);
 const ADMIN_EMAIL = "placement_admin@pec.edu.in"; 
 
-//connectDB();
+connectDB();
 
 app.use(cors());
 app.use(express.json());
