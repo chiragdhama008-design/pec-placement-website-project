@@ -1,0 +1,137 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f4f4;
+}
+
+/* HEADER */
+
+.header{
+    background:#1f4c8c;
+    color:white;
+    padding:20px 40px;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.header p{
+    margin-top:5px;
+    font-size:14px;
+}
+
+
+/* NAVBAR */
+
+.navbar{
+    background:#173d73;
+    padding:12px 40px;
+}
+
+.navbar a{
+    color:white;
+    text-decoration:none;
+    margin-right:25px;
+    font-size:16px;
+}
+
+.navbar a:hover{
+    text-decoration:underline;
+}
+
+
+/* MAIN CONTAINER */
+
+.container{
+    width:80%;
+    margin:40px auto;
+}
+
+
+/* CARD */
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:6px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card h2{
+    display:flex;
+    align-items:center;
+    font-size:22px;
+    margin-bottom:20px;
+}
+
+.bar{
+    width:5px;
+    height:25px;
+    background:#f0a500;
+    margin-right:10px;
+}
+
+
+/* FILTER */
+
+.filters{
+    margin-bottom:20px;
+}
+
+.filters select{
+    padding:8px;
+    margin-right:10px;
+}
+
+.filters button{
+    background:#1f4c8c;
+    color:white;
+    border:none;
+    padding:8px 16px;
+    cursor:pointer;
+    border-radius:3px;
+}
+
+.filters button:hover{
+    background:#173d73;
+}
+
+
+/* TABLE */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+thead{
+    background:#1f4c8c;
+    color:white;
+}
+
+th,td{
+    padding:14px;
+    text-align:center;
+}
+
+tbody tr{
+    border-bottom:1px solid #ddd;
+}
+
+
+/* FOOTER */
+
+.footer{
+    background:#1f4c8c;
+    color:white;
+    text-align:center;
+    padding:12px;
+    margin-top:50px;
+}
+
