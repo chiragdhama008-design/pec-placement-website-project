@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const connectDB1 = require("./configIntern/dbIntern");
 const placementRoutes = require("./routes/placementRoutes");
+const internRoutes = require("./internRoutes/internRoutes");
 
 // 1. Import Google Auth Library
 const { OAuth2Client } = require('google-auth-library');
@@ -15,6 +17,7 @@ const ADMIN_EMAIL = "placement_admin@pec.edu.in";
 
 connectDB();
 
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'frontend')));
@@ -24,6 +27,7 @@ app.get('/', (req, res) => {
 });
 // Your friend's existing routes
 app.use("/api/placements", placementRoutes);
+app.use("/api/interns", internRoutes);
 
 // 3. YOUR NEW LOGIN ROUTE
 app.post('/api/auth/verify', async (req, res) => {
