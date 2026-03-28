@@ -8,14 +8,15 @@ async function handleCredentialResponse(response) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ token: response.credential }) 
+            body: JSON.stringify({ token: response.credential })
         });
 
         const data = await res.json();
 
+        // Inside your handleCredentialResponse function:
         if (data.status === 'success') {
-            // If successful, redirect to your friend's dashboard
-            window.location.href = "dashboard.html";
+            // Use the URL provided by the server instead of a hardcoded path
+            window.location.href = data.redirect_url;
         } else {
             alert(data.message);
         }

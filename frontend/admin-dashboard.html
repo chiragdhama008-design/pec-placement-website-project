@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PEC Placements</title>
+    <style>
+        :root {
+            --pec-blue: #003366;
+            --pec-gold: #f2a900;
+            --bg-color: #f4f7f6;
+            --text-main: #333;
+            --border-color: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); }
+
+        /* Navbar */
+        .navbar { background-color: var(--pec-blue); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .logout-btn { background: none; border: 1px solid white; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* Toggle */
+        .toggle-container { display: flex; justify-content: center; margin-bottom: 30px; }
+        .toggle-btn { padding: 10px 30px; font-size: 16px; font-weight: bold; cursor: pointer; border: 2px solid var(--pec-blue); background: white; color: var(--pec-blue); transition: all 0.3s; }
+        .toggle-btn.active { background: var(--pec-blue); color: white; }
+        .toggle-btn:first-child { border-radius: 25px 0 0 25px; border-right: none; }
+        .toggle-btn:last-child { border-radius: 0 25px 25px 0; border-left: none; }
+
+        /* Toolbar */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; gap: 15px; }
+        .filter-group { display: flex; gap: 15px; flex-grow: 1; }
+        .filter-group input, .filter-group select { padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; }
+        
+        .add-btn { background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        /* Table */
+        .table-container { background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        th { background-color: #f8f9fa; color: #555; }
+        
+        /* 3-Dot Menu */
+        .action-cell { position: relative; text-align: center; }
+        .dot-btn { background: none; border: none; font-size: 20px; cursor: pointer; }
+        .dropdown { display: none; position: absolute; right: 40px; top: 10px; background: white; border: 1px solid var(--border-color); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-radius: 5px; z-index: 100; min-width: 100px; }
+        .dropdown.show { display: block; }
+        .dropdown button { display: block; width: 100%; padding: 10px 15px; border: none; background: none; cursor: pointer; text-align: left; }
+        .dropdown button.delete-text { color: #dc3545; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 500px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; }
+        .save-btn { width: 100%; background: var(--pec-blue); color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <h2>PEC Placement Admin</h2>
+        <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </nav>
+
+    <div class="container">
+        <div class="toggle-container">
+            <button class="toggle-btn active" id="btn-placements" onclick="switchView('placements')">Placements</button>
+            <button class="toggle-btn" id="btn-internships" onclick="switchView('internships')">Internships</button>
+        </div>
+
+        <div class="toolbar">
+            <div class="filter-group">
+                <input type="text" placeholder="Search by name, SID, company..." id="searchInput" onkeyup="filterTable()">
+                <select id="branchFilter" onchange="filterTable()">
+                    <option value="">All Branches</option>
+                </select>
+                <select id="yearFilter" onchange="filterTable()">
+                    <option value="">All Years</option>
+                </select>
+            </div>
+            <button class="add-btn" onclick="openModal('add')">+ Add Data</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SID</th>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Year</th>
+                        <th>Company</th>
+                        <th id="package-header">Package (LPA)</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <h3 id="modalTitle" style="margin-bottom: 20px;">Add Student Data</h3>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label>SID</label>
+                    <input type="text" id="formSid" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="formName" required>
+                </div>
+                <div class="form-group">
+                    <label>Branch</label>
+                    <input type="text" id="formBranch" placeholder="e.g., CSE, ECE, MECH" required>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" id="formYear" placeholder="e.g., 2024" required>
+                </div>
+                <div class="form-group">
+                    <label>Company</label>
+                    <input type="text" id="formCompany" required>
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="formCity" required>
+                </div>
+                <div class="form-group" id="durationGroup" style="display: none;">
+                    <label>Duration (Months)</label>
+                    <input type="number" id="formDuration">
+                </div>
+                <div class="form-group">
+                    <label id="formPackageLabel">Package (LPA)</label>
+                    <input type="number" id="formPackage" step="0.1" required>
+                </div>
+                <button type="button" class="save-btn" onclick="saveData()">Save to Database</button>
+                <button type="button" onclick="closeModal()" style="width:100%; margin-top:10px; background:none; border:none; cursor:pointer; color:#666;">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentDatabaseView = 'placements';
+        let isEditing = false;
+        let allStudentsData = []; // Stores all fetched data globally for fast searching
+
+        window.onload = loadAdminTable;
+
+        function switchView(view) {
+            currentDatabaseView = view;
+            document.getElementById('btn-placements').classList.remove('active');
+            document.getElementById('btn-internships').classList.remove('active');
+            document.getElementById(`btn-${view}`).classList.add('active');
+
+            const isIntern = view === 'internships';
+            document.getElementById('package-header').innerText = isIntern ? 'Stipend' : 'Package (LPA)';
+            document.getElementById('formPackageLabel').innerText = isIntern ? 'Stipend' : 'Package (LPA)';
+            document.getElementById('durationGroup').style.display = isIntern ? 'block' : 'none';
+
+            loadAdminTable();
+        }
+
+        async function loadAdminTable() {
+            const endpoint = currentDatabaseView === 'placements' ? '/api/placements' : '/api/interns';
+            try {
+                const res = await fetch(endpoint);
+                allStudentsData = await res.json(); // Save data to global variable
+                
+                updateDynamicFilters(); // Update the dropdown menus
+                filterTable(); // Render the table
+            } catch (e) { console.error("Load failed", e); }
+        }
+
+        // --- NEW: Dynamic Filter Generator ---
+        function updateDynamicFilters() {
+            const yearSelect = document.getElementById('yearFilter');
+            const branchSelect = document.getElementById('branchFilter');
+            
+            // Extract unique years and branches, then sort them
+            const uniqueYears = [...new Set(allStudentsData.map(s => s.year))].sort((a, b) => b - a);
+            const uniqueBranches = [...new Set(allStudentsData.map(s => s.branch))].sort();
+
+            // Rebuild Year Dropdown
+            yearSelect.innerHTML = '<option value="">All Years</option>';
+            uniqueYears.forEach(year => {
+                if(year) yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+            });
+
+            // Rebuild Branch Dropdown
+            branchSelect.innerHTML = '<option value="">All Branches</option>';
+            uniqueBranches.forEach(branch => {
+                if(branch) branchSelect.innerHTML += `<option value="${branch}">${branch}</option>`;
+            });
+        }
+
+        // --- NEW: Search & Filter Logic ---
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const year = document.getElementById('yearFilter').value;
+            const branch = document.getElementById('branchFilter').value;
+
+            // Filter the global data array
+            const filteredData = allStudentsData.filter(student => {
+                const matchesSearch = student.name.toLowerCase().includes(query) || 
+                                      student.sid.toLowerCase().includes(query) || 
+                                      student.company.toLowerCase().includes(query);
+                const matchesYear = year === "" || student.year.toString() === year;
+                const matchesBranch = branch === "" || student.branch === branch;
+
+                return matchesSearch && matchesYear && matchesBranch;
+            });
+
+            renderTable(filteredData);
+        }
+
+        // Renders rows based on filtered data
+        function renderTable(data) {
+            const tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = "";
+
+            data.forEach(student => {
+                const money = currentDatabaseView === 'placements' ? student.package : student.stipend;
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${student.sid}</td>
+                        <td>${student.name}</td>
+                        <td>${student.branch}</td>
+                        <td>${student.year}</td>
+                        <td>${student.company}</td>
+                        <td>${money}</td>
+                        <td class="action-cell">
+                            <button class="dot-btn" onclick="toggleMenu(this)">&#8942;</button>
+                            <div class="dropdown">
+                                <button onclick="editRecord('${student.sid}', '${student.name}', '${student.branch}', '${student.year}', '${student.company}', '${student.city}', '${money}', '${student.duration || ""}')">Edit</button>
+                                <button class="delete-text" onclick="deleteRecord('${student.sid}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        // --- UPDATED: Modal & Click Outside Logic ---
+        function openModal(mode) {
+            isEditing = mode === 'edit';
+            document.getElementById('formModal').style.display = 'flex';
+            if(mode === 'add') {
+                document.getElementById('studentForm').reset();
+                document.getElementById('modalTitle').innerText = 'Add Data';
+                document.getElementById('formSid').disabled = false;
+            }
+        }
+
+        function closeModal() { 
+            document.getElementById('formModal').style.display = 'none'; 
+        }
+
+        // Close modal when clicking the dark overlay
+        document.getElementById('formModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        function editRecord(sid, name, branch, year, company, city, money, duration) {
+            openModal('edit');
+            document.getElementById('modalTitle').innerText = 'Edit Data';
+            document.getElementById('formSid').value = sid;
+            document.getElementById('formSid').disabled = true; 
+            document.getElementById('formName').value = name;
+            document.getElementById('formBranch').value = branch;
+            document.getElementById('formYear').value = year;
+            document.getElementById('formCompany').value = company;
+            document.getElementById('formCity').value = city;
+            document.getElementById('formPackage').value = money;
+            if(duration) document.getElementById('formDuration').value = duration;
+        }
+
+        // --- UPDATED: Form Validation ---
+        async function saveData() {
+            const form = document.getElementById('studentForm');
+            
+            // Prevents submitting if fields are empty
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return; 
+            }
+
+            const sid = document.getElementById('formSid').value;
+            const studentData = {
+                sid,
+                name: document.getElementById('formName').value,
+                branch: document.getElementById('formBranch').value,
+                year: Number(document.getElementById('formYear').value),
+                company: document.getElementById('formCompany').value,
+                city: document.getElementById('formCity').value
+            };
+
+            let endpoint = '';
+            let method = isEditing ? 'PUT' : 'POST';
+
+            if (currentDatabaseView === 'placements') {
+                studentData.package = Number(document.getElementById('formPackage').value);
+                endpoint = isEditing ? `/api/placements/edit/${sid}` : '/api/placements/add';
+            } else {
+                studentData.stipend = Number(document.getElementById('formPackage').value);
+                studentData.duration = Number(document.getElementById('formDuration').value);
+                endpoint = isEditing ? `/api/interns/editIntern/${sid}` : '/api/interns/addIntern';
+            }
+
+            try {
+                const res = await fetch(endpoint, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(studentData)
+                });
+                if(res.ok) { 
+                    alert("Saved!"); 
+                    closeModal(); 
+                    loadAdminTable(); // Refreshes table and dynamic filters automatically!
+                }
+                else { const err = await res.json(); alert("Error: " + err.message); }
+            } catch (e) { alert("Server Error"); }
+        }
+
+        async function deleteRecord(sid) {
+            if(!confirm("Delete this student?")) return;
+            const endpoint = currentDatabaseView === 'placements' ? `/api/placements/delete/${sid}` : `/api/interns/deleteIntern/${sid}`;
+            try {
+                const res = await fetch(endpoint, { method: 'DELETE' });
+                if(res.ok) { alert("Deleted"); loadAdminTable(); }
+            } catch (e) { alert("Delete failed"); }
+        }
+
+        function toggleMenu(btn) {
+            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            btn.nextElementSibling.classList.toggle('show');
+        }
+
+        window.onclick = (e) => { 
+            if(!e.target.matches('.dot-btn') && !e.target.closest('.modal')) {
+                document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
+            }
+        }
+    </script>
+</body>
+</html>

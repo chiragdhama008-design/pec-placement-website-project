@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const connectDB1 = require("./configIntern/dbIntern");
 const placementRoutes = require("./routes/placementRoutes");
 const internRoutes = require("./internRoutes/internRoutes");
 
@@ -13,9 +12,7 @@ const app = express();
 // 2. Setup your Google Client
 const CLIENT_ID = "832533236059-bhhhjtupvlks59ht7a4b78th5jgucd5l.apps.googleusercontent.com";
 const client = new OAuth2Client(CLIENT_ID);
-const ADMIN_EMAIL = "placement_admin@pec.edu.in"; 
-
-connectDB();
+const ADMIN_EMAIL = "eshans444@gmail.com";
 
 
 app.use(cors());
@@ -33,24 +30,36 @@ app.use("/api/interns", internRoutes);
 app.post('/api/auth/verify', async (req, res) => {
     try {
         const { token } = req.body;
-        
+
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience: CLIENT_ID, 
+            audience: CLIENT_ID,
         });
-        
+
         const payload = ticket.getPayload();
         const userEmail = payload.email;
-        
+
         // Routing Logic
-        if (userEmail === ADMIN_EMAIL || userEmail.endsWith('@pec.edu.in')) {
-            // Valid college user
-            res.json({ status: "success", message: "Login successful!" });
+
+        if (userEmail === ADMIN_EMAIL) {
+            // 1. If it's the Admin, tell the frontend to go to the Admin Dashboard
+            res.json({
+                status: "success",
+                redirect_url: "/admin-dashboard.html",
+                message: "Admin Login Successful!"
+            });
+        } else if (userEmail.endsWith('@pec.edu.in')) {
+            // 2. If it's a Student, tell the frontend to go to the Student Dashboard
+            res.json({
+                status: "success",
+                redirect_url: "/dashboard.html",
+                message: "Student Login Successful!"
+            });
         } else {
-            // Deny outsiders
-            res.status(403).json({ 
-                status: "error", 
-                message: "Access Denied. Please use a valid college ID." 
+            // 3. Deny everyone else
+            res.status(403).json({
+                status: "error",
+                message: "Access Denied. Please use your PEC email."
             });
         }
     } catch (error) {
@@ -59,6 +68,19 @@ app.post('/api/auth/verify', async (req, res) => {
     }
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
-});
+const startServer = async () => {
+    try {
+        await connectDB();
+       
+
+        app.listen(5000, () => {
+            console.log("Server running on port 5000");
+        });
+
+    } catch (error) {
+        console.error("Server failed to start:", error);
+        process.exit(1);
+    }
+};
+
+startServer();

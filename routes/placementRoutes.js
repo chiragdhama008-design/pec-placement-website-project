@@ -208,5 +208,41 @@ router.get("/branch-stats", async (req, res) => {
   }
 });
 
+// ================================
+// 🗑️ DELETE placement (Admin)
+// ================================
+router.delete("/delete/:sid", async (req, res) => {
+  try {
+    const deletedPlacement = await Placement.findOneAndDelete({ sid: req.params.sid });
+    
+    if (!deletedPlacement) {
+      return res.status(404).json({ message: "Student record not found" });
+    }
+    
+    res.json({ message: "Placement record deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// ================================
+// 📝 EDIT placement (Admin)
+// ================================
+router.put("/edit/:sid", async (req, res) => {
+  try {
+    const updatedPlacement = await Placement.findOneAndUpdate(
+      { sid: req.params.sid }, // Find by SID
+      req.body,                // Update with data sent from the form
+      { new: true }            // Return the updated document
+    );
+
+    if (!updatedPlacement) {
+      return res.status(404).json({ message: "Student record not found" });
+    }
+
+    res.json({ message: "Placement record updated successfully", data: updatedPlacement });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

@@ -208,5 +208,33 @@ router.get("/branch-internStats", async (req, res) => {
   }
 });
 
+// ================================
+// DELETE internship (Admin)
+// ================================
+router.delete("/deleteIntern/:sid", async (req, res) => {
+  try {
+    const deletedIntern = await intern.findOneAndDelete({ sid: req.params.sid });
+    if (!deletedIntern) return res.status(404).json({ message: "Intern not found" });
+    res.json({ message: "Intern deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+// ================================
+// EDIT internship (Admin)
+// ================================
+router.put("/editIntern/:sid", async (req, res) => {
+  try {
+    const updatedIntern = await intern.findOneAndUpdate(
+      { sid: req.params.sid },
+      req.body,
+      { new: true }
+    );
+    if (!updatedIntern) return res.status(404).json({ message: "Intern not found" });
+    res.json({ message: "Intern updated successfully", data: updatedIntern });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
